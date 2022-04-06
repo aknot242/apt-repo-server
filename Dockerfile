@@ -51,5 +51,4 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV DISTS focal
 ENV ARCHS amd64
 EXPOSE 80
-VOLUME /data
 ENTRYPOINT ["/startup.sh"]

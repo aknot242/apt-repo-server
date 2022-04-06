@@ -3,23 +3,20 @@ APT-REPO-SERVER
 
 apt-repo-server is a debian repository server. It monitors file changing event(inotify), then reproduce index file(Packages.gz) automatically.
 
+This has been modified to collect NGINX packages using a certificate and key, then host them in a container acting as a repo for demo environment purposes.
+
 Usage
 =======================
 
 Run server
 
 ```
-$ docker run -it -v ${PWD}/data:/data -p 10000:80 dorowu/apt-repo-server
-```
-
-Export a debian package
-```
-$ cp qnap-fix-input_0.1_all.deb  data/dists/focal/main/binary-amd64/
+$ docker run -it -p 10000:80 dorowu/apt-repo-server
 ```
 
 File structure looks like
 ```
-$ tree data/
+$ tree /data/
 data/
 └── dists
     ├── bionic
