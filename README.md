@@ -14,7 +14,7 @@ $ docker run -it -v ${PWD}/data:/data -p 10000:80 dorowu/apt-repo-server
 
 Export a debian package
 ```
-$ cp qnap-fix-input_0.1_all.deb  data/dists/trusty/main/binary-amd64/
+$ cp qnap-fix-input_0.1_all.deb  data/dists/focal/main/binary-amd64/
 ```
 
 File structure looks like
@@ -22,13 +22,13 @@ File structure looks like
 $ tree data/
 data/
 └── dists
-    ├── precise
+    ├── bionic
     │   └── main
     │       ├── binary-amd64
     │       │   └── Packages.gz
     │       └── binary-i386
     │           └── Packages.gz
-    └── trusty
+    └── focal
         └── main
             ├── binary-amd64
             │   ├── Packages.gz
@@ -39,7 +39,7 @@ data/
 
 Packages.gz looks like
 ```
-$ zcat data/dists/trusty/main/binary-amd64/Packages.gz
+$ zcat data/dists/focal/main/binary-amd64/Packages.gz
 Package: qnap-fix-input
 Version: 0.1
 Architecture: all
@@ -58,7 +58,7 @@ Description: QNAP fix
 
 Update /etc/apt/sources.list
 ```
-$ echo deb http://127.0.0.1:10000 trusty main | sudo tee -a /etc/apt/sources.list
+$ echo deb http://127.0.0.1:10000 focal main | sudo tee -a /etc/apt/sources.list
 ```
 
 

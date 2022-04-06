@@ -2,7 +2,7 @@
 
 import subprocess as sp
 from gevent.queue import Queue
-from Queue import Empty as QueueEmpty
+from queue import Empty as QueueEmpty
 from gevent import spawn
 import signal
 from gevent import select
@@ -43,7 +43,7 @@ def main():
                     line = p.stdout.readline().strip()
                     if len(line) == 0:
                         continue
-                    if line.endswith('Packages.gz'):
+                    if line.endswith(b'Packages.gz'):
                         continue
                     queue.put(('msg', line))
         except select.error:
