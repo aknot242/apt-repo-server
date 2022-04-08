@@ -33,14 +33,19 @@ RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644
     apt-get update && \
     mkdir -p /etc/packages/ && \
     cd /etc/packages/ && \
+    for i in $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances nginx-plus | grep "^\w" | sort -u); do apt-get download $i 2>>errors.txt; done && \
     for i in $(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances app-protect | grep "^\w" | sort -u); do apt-get download $i 2>>errors.txt; done && \
     apt-get download app-protect-attack-signatures app-protect-threat-campaigns
 
 
 FROM downloader as final
-COPY --from=downloader /etc/packages /data/
+COPY --from=downloader /etc/packages /data/dists/focal/nginx-plus/binary-amd64/
+COPY --chmod=0755 generate-release.sh .
 
-RUN cd /data && dpkg-scanpackages . /dev/null > Release
+RUN cd /data && dpkg-scanpackages --arch amd64 . > dists/focal/nginx-plus/binary-amd64/Packages
+RUN cd /data && cat dists/focal/nginx-plus/binary-amd64/Packages | gzip -9 > dists/focal/nginx-plus/binary-amd64/Packages.gz
+
+RUN cd /data/dists/focal/nginx-plus/binary-amd64 && /generate-release.sh > Release
 
 ADD supervisord.conf /etc/supervisor/
 ADD nginx.conf /etc/nginx/sites-enabled/default
