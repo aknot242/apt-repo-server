@@ -39,13 +39,13 @@ RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644
 
 
 FROM downloader as final
-COPY --from=downloader /etc/packages /data/dists/focal/nginx-plus/binary-amd64/
+COPY --from=downloader /etc/packages /data/ubuntu/dists/focal/nginx-plus/binary-amd64/
 COPY --chmod=0755 generate-release.sh .
 
-RUN cd /data && dpkg-scanpackages --arch amd64 . > dists/focal/nginx-plus/binary-amd64/Packages
-RUN cd /data && cat dists/focal/nginx-plus/binary-amd64/Packages | gzip -9 > dists/focal/nginx-plus/binary-amd64/Packages.gz
+RUN cd /data/ubuntu && dpkg-scanpackages --arch amd64 . > dists/focal/nginx-plus/binary-amd64/Packages
+RUN cd /data/ubuntu && cat dists/focal/nginx-plus/binary-amd64/Packages | gzip -9 > dists/focal/nginx-plus/binary-amd64/Packages.gz
 
-RUN cd /data/dists/focal/nginx-plus/binary-amd64 && /generate-release.sh > Release
+RUN cd /data/ubuntu/dists/focal/nginx-plus/binary-amd64 && /generate-release.sh > Release
 
 ADD supervisord.conf /etc/supervisor/
 ADD nginx.conf /etc/nginx/sites-enabled/default
