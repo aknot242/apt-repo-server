@@ -1,12 +1,10 @@
 FROM ubuntu:focal as base
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update \
-    && apt-get install -y --force-yes --no-install-recommends dpkg-dev nginx inotify-tools supervisor apt-transport-https lsb-release ca-certificates wget gnupg2 pip apt-rdepends \
+    && apt-get install -y --force-yes --no-install-recommends dpkg-dev nginx supervisor apt-transport-https lsb-release ca-certificates wget gnupg2 apt-rdepends dpkg-dev \
     && apt-get autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
 
 
 FROM base as downloader
@@ -40,15 +38,14 @@ RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644
 
 
 FROM downloader as final
-COPY --from=downloader /etc/packages /data/dists/focal/main/binary-amd64/
+COPY --from=downloader /etc/packages /data/
+
+RUN cd /data && dpkg-scanpackages . /dev/null > Release
 
 ADD supervisord.conf /etc/supervisor/
 ADD nginx.conf /etc/nginx/sites-enabled/default
 ADD startup.sh /
-ADD scan.py /
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV DISTS focal
-ENV ARCHS amd64
 EXPOSE 80
 ENTRYPOINT ["/startup.sh"]
